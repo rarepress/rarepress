@@ -165,9 +165,18 @@ class Token {
   }
   async save(token) {
     if (!token.metadata) {
-      const cid = /\/ipfs\/(.+)$/.exec(token.uri)[1]
-      let metastr = await this.nebulus.get(cid)
-      token.metadata = JSON.parse(metastr)
+      let matches = /\/ipfs\/(.+)$/.exec(token.uri)
+      if (matches && matches.length > 0) {
+        const cid = /\/ipfs\/(.+)$/.exec(token.uri)[1]
+        let metastr = await this.nebulus.get(cid)
+        token.metadata = JSON.parse(metastr)
+      } else if (token.uri.startsWith("data:application/json;base64,")) {
+        let b64 = token.uri.slice(29)
+        let metastr = Buffer.from(b64, "base64").toString()
+        token.metadata = JSON.parse(metastr)
+      } else {
+        throw new Error("metadata invalid", token)
+      }
     }
     await this.db.token.save(token)
     return token
@@ -265,9 +274,14 @@ class Token {
     // 1. write metadata to nebulus
     // 2. insert metadata to db
     const metastr = JSON.stringify(o.metadata)
-    const cid = await this.nebulus.add(Buffer.from(metastr))
-    const tokenURI = `/ipfs/${cid}`
-    return tokenURI
+    if (o.metadataLocation === "eth") {
+      const tokenURI = `data:application/json;base64,${Buffer.from(metastr).toString("base64")}`
+      return tokenURI
+    } else {
+      const cid = await this.nebulus.add(Buffer.from(metastr))
+      const tokenURI = `/ipfs/${cid}`
+      return tokenURI
+    }
   }
   id(creator) {
     const timestamp = Date.now()  // 13 digits

@@ -1,6 +1,6 @@
 {
   "name": "rarepress",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "ethereum-private-key-to-address": "^0.0.7",
     "mushie": "0.0.4",
     "nebulus": "^0.0.11",
-    "rarebase": "0.0.3",
+    "rarebase": "0.0.4",
     "traverse": "^0.6.6",
     "web3": "^1.5.0"
   },
