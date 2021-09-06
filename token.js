@@ -285,7 +285,7 @@ class Token {
   }
   id(creator) {
     const timestamp = Date.now()  // 13 digits
-    const rand = (Math.random() * Math.pow(10, 14)).toString().slice(0,11); // 11 digits
+    const rand = (Math.random() * Math.pow(10, 18)).toString().slice(0,11); // 11 digits
     const base = "" + timestamp + rand // 24 digits
     let bi = BigInt(creator + base)
     return bi.toString(10)
